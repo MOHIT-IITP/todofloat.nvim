@@ -31,14 +31,6 @@ local function ensure_file_exists(path)
 	end
 end
 
-local function add_task(buf)
-	local row = vim.api.nvim_win_get_cursor(0)[1]
-
-	vim.api.nvim_buf_set_lines(buf, row, row, false, { "- [ ] " })
-	vim.api.nvim_win_set_cursor(0, { row + 1, 6 })
-	vim.cmd("startinsert")
-end
-
 local function toggle_checkbox(buf)
 	local row = vim.api.nvim_win_get_cursor(0)[1] - 1
 	local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
@@ -87,9 +79,6 @@ local function open_floating_file(target_file)
 		vim.api.nvim_win_close(win, true)
 	end)
 
-	map("C-a", function()
-		add_task(buf)
-	end)
 
 	map("x", function()
 		toggle_checkbox(buf)
