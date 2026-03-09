@@ -39,6 +39,25 @@ local function add_task(buf)
 	vim.cmd("startinsert")
 end
 
+local function toggle_checkbox(buf)
+	local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+	local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
+
+	if not line then
+		return
+	end
+
+	if line:match("%- %[ %]") then
+		line = line:gsub("%- %[ %]", "- [x]", 1)
+	elseif line:match("%- %[x%]") then
+		line = line:gsub("%- %[x%]", "- [ ]", 1)
+	else
+		return
+	end
+
+	vim.api.nvim_buf_set_lines(buf, row, row + 1, false, { line })
+end
+
 local function open_floating_file(target_file)
 	local expanded_path = expand_path(target_file)
 
@@ -60,7 +79,6 @@ local function open_floating_file(target_file)
 		vim.keymap.set("n", key, fn, { buffer = buf, silent = true })
 	end
 
-	-- quit window
 	map("q", function()
 		if vim.bo.modified then
 			vim.notify("Save your changes first", vim.log.levels.WARN)
@@ -69,9 +87,12 @@ local function open_floating_file(target_file)
 		vim.api.nvim_win_close(win, true)
 	end)
 
-	-- add task
 	map("a", function()
 		add_task(buf)
+	end)
+
+	map("x", function()
+		toggle_checkbox(buf)
 	end)
 end
 
