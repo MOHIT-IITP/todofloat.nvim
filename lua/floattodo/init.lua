@@ -87,7 +87,7 @@ local function open_floating_file(target_file)
 		vim.api.nvim_win_close(win, true)
 	end)
 
-	map("a", function()
+	map("C-a", function()
 		add_task(buf)
 	end)
 
